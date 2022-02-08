@@ -4,16 +4,16 @@ from django.db import models
 class BaseManager(models.Manager):
 
     def get_queryset(self):
-        return super().get_queryset().filter(is_delete=False)
+        return super().get_queryset().filter(is_deleted=False)
 
     def get_all(self):
         return super().get_queryset()
 
     def get_delete_list(self):
-        return super().get_queryset().filter(is_delete=True)
+        return super().get_queryset().filter(is_deleted=True)
 
     def get_active_list(self):
-        return super().get_queryset().filter(is_delete=False, is_active=True)
+        return super().get_queryset().filter(is_deleted=False, is_active=True)
 
     def get_deactivate_list(self):
         return super().get_queryset().filter(is_active=False)
@@ -41,4 +41,4 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True
 
-    objects = BaseManager
+    objects = BaseManager()
