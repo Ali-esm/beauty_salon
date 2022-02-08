@@ -1,6 +1,24 @@
 from django.db import models
 
 
+class BaseManager(models.Manager):
+
+    def get_queryset(self):
+        return super().get_queryset().filter(is_delete=False)
+
+    def get_all(self):
+        return super().get_queryset()
+
+    def get_delete_list(self):
+        return super().get_queryset().filter(is_delete=True)
+
+    def get_active_list(self):
+        return super().get_queryset().filter(is_delete=False, is_active=True)
+
+    def get_deactivate_list(self):
+        return super().get_queryset().filter(is_active=False)
+
+
 # Create your models here.
 class BaseModel(models.Model):
     create_timestamp = models.DateTimeField(auto_now_add=True)
@@ -22,3 +40,5 @@ class BaseModel(models.Model):
 
     class Meta:
         abstract = True
+
+    objects = BaseManager
