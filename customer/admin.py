@@ -3,7 +3,7 @@ from .models import Customer
 
 
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ['username', 'email', 'phone']
+    list_display = ['username', 'email', 'phone', 'is_deleted', 'is_active']
     list_display_links = ['username', 'email']
 
     def logical_delete(self, request, queryset):
