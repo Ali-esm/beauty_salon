@@ -23,6 +23,10 @@ class Service(BaseModel):
             new_time = datetime.datetime.strptime(str(new_time), '%H:%M:%S').time()
         return times
 
+    @property
+    def child_price(self):
+        return self.price * 0.5
+
     def __str__(self):
         return f'{self.name}'
 
