@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     # My Installed apps
     'core',
     'customer',
+    'salon',
+    'reservation',
 ]
 
 MIDDLEWARE = [
