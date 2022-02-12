@@ -1,10 +1,13 @@
 from django.contrib import admin
+
+from .forms import CustomerForm
 from .models import Customer
 
 
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ['username', 'email', 'phone', 'is_deleted', 'is_active']
     list_display_links = ['username', 'email']
+    form = CustomerForm
 
     def logical_delete(self, request, queryset):
         queryset.update(is_deleted=True)
