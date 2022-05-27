@@ -16,7 +16,7 @@ class Service(BaseModel):
     def times_list(self):
         times = [str(self.start_time)]
         new_time = self.start_time
-        while new_time != self.end_time:
+        while new_time < self.end_time:
             new_time = timedelta(hours=new_time.hour, minutes=new_time.minute)
             new_time += self.duration
             times.append(str(new_time))
