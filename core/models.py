@@ -1,4 +1,9 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+
+
+class User(AbstractUser):
+    pass
 
 
 class BaseManager(models.Manager):
@@ -26,6 +31,11 @@ class BaseModel(models.Model):
     is_deleted = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
+    objects = BaseManager()
+
+    class Meta:
+        abstract = True
+
     def activate(self):
         self.is_active = True
         self.save()
@@ -37,8 +47,3 @@ class BaseModel(models.Model):
     def logical_delete(self):
         self.is_deleted = True
         self.save()
-
-    class Meta:
-        abstract = True
-
-    objects = BaseManager()
