@@ -1,0 +1,135 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>AriaMan</title>
+    <script src="https://use.fontawesome.com/6bee649b1d.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-6 col-lg-3 mt-5">
+            <form class="card form-control">
+                <!-- change service and get related agent -->
+                <label for="service">Select Services</label>
+                <select name="service" id="service" class="form-select m-2">
+                        <option disabled selected>-----</option>
+                    {% for service in services %}
+                        <option value="{{ service.id }}">{{ service }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="agent">Select Agent</label>
+                <select name="agent" id="agent" class="form-select m-2" disabled>
+                </select>
+
+                <label for="times">Select Time</label>
+                <select name="times" id="times" class="form-select m-2" disabled>
+                </select>
+
+                <label for="date-picker">Select Date</label>
+                <input type="text" id="date-picker" class="form-control m-2" disabled>
+                <input type="button" value="Check" id="check" class="col-5 btn btn-outline-success" disabled>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="{% static 'js/main.js' %}"></script>
+<script>
+    let dates = ["08-06-2022"];
+    let agentElement = $("#agent")
+    let datePicker = $("#date-picker")
+    let timePicker = $("#times")
+    let checkBtn = $("#check")
+    function disableDates(date){
+        let string = $.datepicker.formatDate('dd-mm-yy', date);
+        return [dates.indexOf(string) == -1];
+    }
+
+    function disableHoliday(date){
+        let string = $.datepicker.formatDate('yy-mm-dd', date);
+        let filterDate = new Date(string);
+        let day = filterDate.getDay();
+        return [day != 0 && day != 6]
+    }
+
+    $(document).ready(function (){
+        $("#date-picker").datepicker({
+            minDate: 0,
+            maxDate: "+6D",
+            beforeShowDay: disableDates
+        });
+    });
+
+    $('#service').on('change', function (){
+        let serviceId = this.value
+        agentElement.removeAttr("disabled")
+        timePicker.removeAttr("disabled")
+        datePicker.removeAttr("disabled")
+        checkBtn.removeAttr("disabled")
+        fetch(`{% url 'agents-list' %}?service=${serviceId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data){
+                    agentElement.empty()
+                    for (let agent of data){
+                        agentElement.append(`<option value="${agent.id}">${agent.name}</option>`)
+                    }
+                }
+            });
+
+        fetch(`{% url 'times-list' %}?service=${serviceId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data){
+                    timePicker.empty()
+                    data.times.forEach(function (value, i){
+                        timePicker.append(`<option value="${i}">${value}</option>`)
+                    })
+                }
+            })
+    })
+
+    $('#check').on('click', function (){
+        let service = $('#service')
+        let serviceId = service.val();
+        let agentId = agentElement.val();
+        let timeValue = timePicker.find(":selected").text();
+        let dateValue = datePicker.val();
+        let data = {
+            'service_id': serviceId,
+            'agent_id': agentId,
+            'time': timeValue,
+            'date': dateValue,
+        }
+
+        fetch(`{% url 'check-reservation' %}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': "{{ csrf_token }}",
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+
+    })
+</script>
+</body>
+</html>

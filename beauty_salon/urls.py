@@ -15,7 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from reservation.views import (
+    Reservation,
+    GetAgentsJson,
+    GetServiceTime,
+    CheckReservationExists,
+)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
+    path("", Reservation.as_view(), name="test_view"),
+    path("agents-list/", GetAgentsJson.as_view(), name="agents-list"),
+    path("times-list/", GetServiceTime.as_view(), name="times-list"),
+    path(
+        "check-reservation/", CheckReservationExists.as_view(), name="check-reservation"
+    ),
 ]

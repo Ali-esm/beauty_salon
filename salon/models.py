@@ -1,6 +1,5 @@
 import datetime
 from datetime import timedelta
-
 from django.db import models
 from core.models import BaseModel
 
@@ -20,7 +19,7 @@ class Service(BaseModel):
             new_time = timedelta(hours=new_time.hour, minutes=new_time.minute)
             new_time += self.duration
             times.append(str(new_time))
-            new_time = datetime.datetime.strptime(str(new_time), '%H:%M:%S').time()
+            new_time = datetime.datetime.strptime(str(new_time), "%H:%M:%S").time()
         return times
 
     @property
@@ -28,7 +27,7 @@ class Service(BaseModel):
         return self.price * 0.5
 
     def __str__(self):
-        return f'{self.name}'
+        return f"{self.name}"
 
 
 class Agent(BaseModel):
@@ -40,4 +39,4 @@ class Agent(BaseModel):
     service = models.ForeignKey(Service, on_delete=models.DO_NOTHING)
 
     def __str__(self):
-        return f'{self.name}'
+        return f"{self.name}"

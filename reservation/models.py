@@ -9,25 +9,15 @@ class Booking(BaseModel):
     service = models.ForeignKey(Service, on_delete=models.RESTRICT)
     customer = models.ForeignKey(Customer, on_delete=models.RESTRICT)
     total_price = models.PositiveIntegerField(null=True, blank=True)
-    reserve_time = models.TimeField()
+    reserve_time = models.TextField()
     reserve_date = models.DateField()
 
     def __str__(self):
-        return f"{self.customer.username} reservation"
+        return f"{self.customer.full_name} reservation"
 
 
 class Holiday(BaseModel):
-    WEEK_DAYS = (
-        (0, 'Saturday'),
-        (1, 'Sunday'),
-        (2, 'Monday'),
-        (3, 'Tuesday'),
-        (4, 'Wednesday'),
-        (5, 'Thursday'),
-        (6, 'Friday')
-    )
-
-    holiday = models.IntegerField(unique=True, choices=WEEK_DAYS)
+    holiday = models.DateField()
 
     def __str__(self):
-        return f"{self.WEEK_DAYS[self.holiday][1]}"
+        return f"{self.holiday}"
