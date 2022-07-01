@@ -2,6 +2,7 @@ from django.db import models
 from core.models import BaseModel
 from customer.models import Customer
 from salon.models import Agent, Service
+import uuid
 
 
 class Booking(BaseModel):
@@ -11,6 +12,11 @@ class Booking(BaseModel):
     total_price = models.PositiveIntegerField(null=True, blank=True)
     reserve_time = models.TextField()
     reserve_date = models.DateField()
+    reservation_uuid = models.UUIDField(
+        default=uuid.uuid4,
+        editable=False,
+        unique=True,
+    )
 
     def __str__(self):
         return f"{self.customer.full_name} reservation"

@@ -7,7 +7,6 @@ class User(AbstractUser):
 
 
 class BaseManager(models.Manager):
-
     def get_queryset(self):
         return super().get_queryset().filter(is_deleted=False)
 
@@ -24,7 +23,6 @@ class BaseManager(models.Manager):
         return super().get_queryset().filter(is_active=False)
 
 
-# Create your models here.
 class BaseModel(models.Model):
     create_timestamp = models.DateTimeField(auto_now_add=True)
     update_timestamp = models.DateTimeField(auto_now=True)

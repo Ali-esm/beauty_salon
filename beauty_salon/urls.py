@@ -24,7 +24,7 @@ from reservation.views import (
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", Reservation.as_view(), name="test_view"),
+    path("", Reservation.as_view(), name="reserve_view"),
     path("agents-list/", GetAgentsJson.as_view(), name="agents-list"),
     path("times-list/", GetServiceTime.as_view(), name="times-list"),
     path(

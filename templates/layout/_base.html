@@ -6,7 +6,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>AriaMan</title>
+    <title>Reservation</title>
     <script src="https://use.fontawesome.com/6bee649b1d.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
@@ -20,10 +20,11 @@
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-6 col-lg-3 mt-5">
+        <h1 class="text-center">Hair Salon Reservation</h1>
             <form class="card form-control">
                 <!-- change service and get related agent -->
                 <label for="service">Select Services</label>
-                <select name="service" id="service" class="form-select m-2">
+                <select name="service" id="service" class="form-select">
                         <option disabled selected>-----</option>
                     {% for service in services %}
                         <option value="{{ service.id }}">{{ service }}</option>
@@ -31,17 +32,30 @@
                 </select>
 
                 <label for="agent">Select Agent</label>
-                <select name="agent" id="agent" class="form-select m-2" disabled>
+                <select name="agent" id="agent" class="form-select" disabled>
                 </select>
 
                 <label for="times">Select Time</label>
-                <select name="times" id="times" class="form-select m-2" disabled>
+                <select name="times" id="times" class="form-select" disabled>
                 </select>
 
                 <label for="date-picker">Select Date</label>
-                <input type="text" id="date-picker" class="form-control m-2" disabled>
-                <input type="button" value="Check" id="check" class="col-5 btn btn-outline-success" disabled>
+                <input type="text" id="date-picker" class="form-control" disabled>
+
+                <div style="display: none" id="user_info">
+                    {% for field in customer_form %}
+                        {{ field.label }}
+                        {{ field.as_widget }}
+                    {% endfor %}
+                </div>
+
+                <div class="col justify-content-between">
+                    <input type="button" value="Check" id="check" class="col-5 btn btn-outline-success mt-3" disabled>
+                    <input type="button" value="Reserve" id="reserve" class="col-5 btn btn-outline-primary mt-3" disabled>
+                </div>
+
             </form>
+
         </div>
     </div>
 </div>
@@ -123,12 +137,49 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data)
+            if (data["ok"]){
+                $('#user_info').show(500)
+                $('#reserve').removeAttr("disabled")
+                $('#check').attr('disabled', true)
+
+            }else{
+                alert(data["msg"])
+            }
         })
         .catch((error) => {
             console.log(error)
         })
 
+    })
+    $('#reserve').on('click', function (){
+        let name = $('#id_name').val();
+        let last_name = $('#id_last_name').val()
+        let phone = $('#id_phone').val()
+        let customerForm = new FormData();
+        customerForm.append('name', name);
+        customerForm.append('last_name', last_name);
+        customerForm.append('phone', phone)
+
+        fetch(`{% url "reserve_view" %}`,{
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': "{{ csrf_token }}",
+            },
+            body: customerForm,
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data["status"]){
+                    console.log(data)
+                    console.log("ok")
+                }else{
+                    console.log(data)
+                    alert(data["error"]);
+                }
+            })
+            .catch((error) => {
+                console.log(error)
+            })
     })
 </script>
 </body>
