@@ -30,8 +30,6 @@ class Reservation(View):
         customer_info = request.POST
         customer_form = CustomerForm(customer_info)
         if customer_form.is_valid():
-            print(reservation_info)
-            print(customer_info)
             customer_obj = Customer.objects.create(
                 name=customer_form.cleaned_data["name"],
                 last_name=customer_form.cleaned_data["last_name"],
@@ -45,8 +43,15 @@ class Reservation(View):
                 reserve_time=reservation_info["time"],
                 reserve_date=date_object,
             )
-            print(booking_obj.reservation_uuid)
-            return JsonResponse({"status": 1}, status=201)
+            return JsonResponse(
+                {
+                    "status": 1,
+                    "reserve_id": booking_obj.reservation_uuid,
+                    "reserve_time": booking_obj.reserve_time,
+                    "reserve_date": booking_obj.reserve_date,
+                },
+                status=201,
+            )
         return JsonResponse(
             {"status": 0, "error": customer_form.errors.as_json()}, status=400
         )

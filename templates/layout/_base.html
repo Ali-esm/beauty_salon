@@ -19,8 +19,8 @@
 <body>
 <div class="container-fluid">
     <div class="row justify-content-center">
-        <div class="col-6 col-lg-3 mt-5">
-        <h1 class="text-center">Hair Salon Reservation</h1>
+        <div class="col-6 col-lg-3 mt-5" id="form_container">
+            <h1 class="text-center">Hair Salon Reservation</h1>
             <form class="card form-control">
                 <!-- change service and get related agent -->
                 <label for="service">Select Services</label>
@@ -170,8 +170,11 @@
             .then(response => response.json())
             .then(data => {
                 if (data["status"]){
-                    console.log(data)
-                    console.log("ok")
+                    reserveData = `<h2 class="text-center text-success">Hair Salon Reservation succeed</h2>
+<h5 class="text-center">you reserved at ${data["reserve_time"]} ${data["reserve_date"]} and</h5>
+<h5 class="text-center">your reservation code is ${data["reserve_id"]}</h5>`
+                    $("#form_container").addClass("col-lg-6 col-8").removeClass("col-6 col-lg-3").html(reserveData)
+
                 }else{
                     console.log(data)
                     alert(data["error"]);
